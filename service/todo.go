@@ -85,7 +85,7 @@ func (s *TaskService) ListOverDue(ctx context.Context, req *pb.ListOverReq) (*pb
 		s.logger.Error("failed to parse Time", l.Error(err))
 		return nil, status.Error(codes.Internal, "failed to parse Time")
 	}
-	Tasks, count, err := s.storage.Task().ListOverDue(duration)
+	Tasks, count, err := s.storage.Task().ListOverDue(duration, req.Page, req.Limit)
 	if err != nil {
 		s.logger.Error("failed to list Tasks", l.Error(err))
 		return nil, status.Error(codes.Internal, "failed to list Tasks")
