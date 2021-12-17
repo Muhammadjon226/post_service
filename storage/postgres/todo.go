@@ -1,11 +1,11 @@
 package postgres
 
-import (	
-	"time"
+import (
 	"database/sql"
+	"time"
 
 	"github.com/jmoiron/sqlx"
-	
+
 	pb "github.com/Muhammadjon226/toDo-service/genproto"
 )
 
@@ -114,11 +114,11 @@ func (r *taskRepo) Delete(id int64) error {
 	return nil
 }
 
-func (r *taskRepo) ListOverDue(t time.Time, page,limit int64) ([]*pb.Task, int64, error) {
+func (r *taskRepo) ListOverDue(t time.Time, page, limit int64) ([]*pb.Task, int64, error) {
 	offset := (page - 1) * limit
 	rows, err := r.db.Queryx(
 		`SELECT id, assignee, title, summary, deadline,status from tasks WHERE deadline > $1 LIMIT $2 OFFSET $3`,
-		t,limit, offset)
+		t, limit, offset)
 	if err != nil {
 		return nil, 0, err
 	}

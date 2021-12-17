@@ -11,7 +11,6 @@ import (
 	"github.com/Muhammadjon226/toDo-service/pkg/db"
 	"github.com/Muhammadjon226/toDo-service/pkg/logger"
 	"github.com/Muhammadjon226/toDo-service/service"
-	
 )
 
 func main() {
