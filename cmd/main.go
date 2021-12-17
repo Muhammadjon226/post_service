@@ -4,13 +4,14 @@ import (
 	"net"
 
 	"google.golang.org/grpc"
+	"google.golang.org/grpc/reflection"
 
 	"github.com/Muhammadjon226/toDo-service/config"
 	pb "github.com/Muhammadjon226/toDo-service/genproto"
 	"github.com/Muhammadjon226/toDo-service/pkg/db"
 	"github.com/Muhammadjon226/toDo-service/pkg/logger"
 	"github.com/Muhammadjon226/toDo-service/service"
-	"google.golang.org/grpc/reflection"
+	
 )
 
 func main() {
