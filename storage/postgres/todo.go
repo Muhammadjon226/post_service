@@ -62,6 +62,7 @@ func (r *taskRepo) List(page, limit int64) ([]*pb.Task, int64, error) {
 		SELECT id, assignee, title, summary, deadline,status,created_at,updated_at FROM tasks 
 		WHERE deleted_at IS NOT NULL
 		LIMIT $1 OFFSET $2`,
+		
 		limit, offset)
 	if err != nil {
 		return nil, 0, err
