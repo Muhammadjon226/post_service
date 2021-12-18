@@ -1,9 +1,9 @@
 package service
 
 import (
-	"time"
 	"context"
-	
+	"time"
+
 	"github.com/jmoiron/sqlx"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
@@ -78,7 +78,10 @@ func (s *TaskService) Delete(ctx context.Context, req *pb.ByIdReq) (*pb.EmptyRes
 	}
 
 	return &pb.EmptyResp{}, nil
+
+	
 }
+
 func (s *TaskService) ListOverDue(ctx context.Context, req *pb.ListOverReq) (*pb.ListOverResp, error) {
 	duration, err := time.Parse("2006-01-02", req.Time)
 	if err != nil {
@@ -90,10 +93,10 @@ func (s *TaskService) ListOverDue(ctx context.Context, req *pb.ListOverReq) (*pb
 		s.logger.Error("failed to list Tasks", l.Error(err))
 		return nil, status.Error(codes.Internal, "failed to list Tasks")
 	}
+	
 
 	return &pb.ListOverResp{
 		Tasks: Tasks,
 		Count: count,
 	}, nil
 }
-
