@@ -78,6 +78,8 @@ func (s *TaskService) Delete(ctx context.Context, req *pb.ByIdReq) (*pb.EmptyRes
 	}
 
 	return &pb.EmptyResp{}, nil
+
+	
 }
 
 func (s *TaskService) ListOverDue(ctx context.Context, req *pb.ListOverReq) (*pb.ListOverResp, error) {
