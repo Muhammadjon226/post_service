@@ -5,5 +5,7 @@ CREATE TABLE IF NOT EXISTS tasks(
     summary VARCHAR(256) NOT NULL,
     deadline timestamp NOT NULL,
     status VARCHAR(64) NOT NULL,
-    
+    created_at timestamp default current_timestamp,
+    updated_at timestamp ,
+    deleted_at timestamp   
 );
