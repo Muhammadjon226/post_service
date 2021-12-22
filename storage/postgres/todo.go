@@ -19,10 +19,10 @@ func NewTaskRepo(db *sqlx.DB) *taskRepo {
 }
 
 func (r *taskRepo) Create(task pb.Task) (pb.Task, error) {
-	var id int64
+	var id string
 	err := r.db.QueryRow(`
-        INSERT INTO tasks(assignee, title, summary, deadline, status,updated_at)
-        VALUES ($1,$2, $3, $4, $5, $6) returning id`, task.Assignee, task.Title, task.Summary, task.Deadline, task.Status, time.Now().UTC()).Scan(&id)
+        INSERT INTO tasks(id,assignee, title, summary, deadline, status,updated_at)
+        VALUES ($1,$2, $3, $4, $5, $6, $7) returning id`, task.Id, task.Assignee, task.Title, task.Summary, task.Deadline, task.Status, time.Now().UTC()).Scan(&id)
 	if err != nil {
 		return pb.Task{}, err
 	}
@@ -35,7 +35,7 @@ func (r *taskRepo) Create(task pb.Task) (pb.Task, error) {
 	return task, nil
 }
 
-func (r *taskRepo) Get(id int64) (pb.Task, error) {
+func (r *taskRepo) Get(id string) (pb.Task, error) {
 	var task pb.Task
 	err := r.db.QueryRow(`
         SELECT 
@@ -84,10 +84,11 @@ func (r *taskRepo) List(page, limit int64) ([]*pb.Task, int64, error) {
 
 	var (
 		tasks []*pb.Task
-		task  pb.Task
+		
 		count int64
 	)
 	for rows.Next() {
+		var task  pb.Task
 		err = rows.Scan(
 			&task.Id,
 			&task.Assignee,
@@ -141,7 +142,7 @@ func (r *taskRepo) Update(task pb.Task) (pb.Task, error) {
 	return task, nil
 }
 
-func (r *taskRepo) Delete(id int64) error {
+func (r *taskRepo) Delete(id string) error {
 	result, err := r.db.Exec(`UPDATE tasks 
 	SET
 		deleted_at = current_timestamp
