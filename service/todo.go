@@ -4,6 +4,7 @@ import (
 	"context"
 	"time"
 
+	"github.com/gofrs/uuid"
 	"github.com/jmoiron/sqlx"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
@@ -28,6 +29,13 @@ func NewTaskService(db *sqlx.DB, log l.Logger) *TaskService {
 }
 
 func (s *TaskService) Create(ctx context.Context, req *pb.Task) (*pb.Task, error) {
+	id, err := uuid.NewV4()
+	if err != nil {
+		s.logger.Error("failed while generating uuid", l.Error(err))
+		return nil, status.Error(codes.Internal, "failed generate uuid")
+	}
+	req.Id = id.String()
+
 	Task, err := s.storage.Task().Create(*req)
 	if err != nil {
 		s.logger.Error("failed to create Task", l.Error(err))
@@ -78,8 +86,6 @@ func (s *TaskService) Delete(ctx context.Context, req *pb.ByIdReq) (*pb.EmptyRes
 	}
 
 	return &pb.EmptyResp{}, nil
-
-	
 }
 
 func (s *TaskService) ListOverDue(ctx context.Context, req *pb.ListOverReq) (*pb.ListOverResp, error) {
@@ -93,7 +99,6 @@ func (s *TaskService) ListOverDue(ctx context.Context, req *pb.ListOverReq) (*pb
 		s.logger.Error("failed to list Tasks", l.Error(err))
 		return nil, status.Error(codes.Internal, "failed to list Tasks")
 	}
-	
 
 	return &pb.ListOverResp{
 		Tasks: Tasks,
