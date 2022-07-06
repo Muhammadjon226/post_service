@@ -1,17 +1,14 @@
 package repo
 
 import (
-	"time"
-
-	pb "github.com/Muhammadjon226/toDo-service/genproto"
+	pb "github.com/Muhammadjon226/post_service/genproto/post_service"
 )
 
-// TaskStorageI ...
-type TaskStorageI interface {
-	Create(pb.Task) (pb.Task, error)
-	Get(id string) (pb.Task, error)
-	List(page, limit int64) ([]*pb.Task, int64, error)
-	Update(pb.Task) (pb.Task, error)
-	Delete(id string) error
-	ListOverDue(t time.Time, page, limit int64) ([]*pb.Task, int64, error)
+// PostStorageI ...
+type PostStorageI interface {
+	Create(*pb.Post) (*pb.Post, error)
+	Get(*pb.ByIdReq) (*pb.Post, error)
+	List(*pb.ListReq) (*pb.ListResp, error)
+	Update(*pb.Post) (*pb.Post, error)
+	Delete(*pb.ByIdReq) error
 }

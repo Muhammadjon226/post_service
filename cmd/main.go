@@ -6,17 +6,17 @@ import (
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/reflection"
 
-	"github.com/Muhammadjon226/toDo-service/config"
-	pb "github.com/Muhammadjon226/toDo-service/genproto"
-	"github.com/Muhammadjon226/toDo-service/pkg/db"
-	"github.com/Muhammadjon226/toDo-service/pkg/logger"
-	"github.com/Muhammadjon226/toDo-service/service"
+	"github.com/Muhammadjon226/post_service/config"
+	pbPost "github.com/Muhammadjon226/post_service/genproto/post_service"
+	"github.com/Muhammadjon226/post_service/pkg/db"
+	"github.com/Muhammadjon226/post_service/pkg/logger"
+	"github.com/Muhammadjon226/post_service/service"
 )
 
 func main() {
 	cfg := config.Load()
 
-	log := logger.New(cfg.LogLevel, "todo-service")
+	log := logger.New(cfg.LogLevel, "post_service")
 	defer func(l logger.Logger) {
 		err := logger.Cleanup(l)
 		if err != nil {
@@ -34,7 +34,7 @@ func main() {
 		log.Fatal("sqlx connection to postgres error", logger.Error(err))
 	}
 
-	taskService := service.NewTaskService(connDB, log)
+	postService := service.NewPostService(connDB, log)
 
 	lis, err := net.Listen("tcp", cfg.RPCPort)
 	if err != nil {
@@ -42,7 +42,7 @@ func main() {
 	}
 
 	s := grpc.NewServer()
-	pb.RegisterToDoServiceServer(s, taskService)
+	pbPost.RegisterPostServiceServer(s, postService)
 	reflection.Register(s)
 	log.Info("main: server running",
 		logger.String("port", cfg.RPCPort))

@@ -3,28 +3,28 @@ package storage
 import (
 	"github.com/jmoiron/sqlx"
 
-	"github.com/Muhammadjon226/toDo-service/storage/postgres"
-	"github.com/Muhammadjon226/toDo-service/storage/repo"
+	"github.com/Muhammadjon226/post_service/storage/postgres"
+	"github.com/Muhammadjon226/post_service/storage/repo"
 )
 
 // IStorage ...
 type IStorage interface {
-	Task() repo.TaskStorageI
+	Post() repo.PostStorageI
 }
 
 type storagePg struct {
 	db       *sqlx.DB
-	taskRepo repo.TaskStorageI
+	postRepo repo.PostStorageI
 }
 
 // NewStoragePg ...
 func NewStoragePg(db *sqlx.DB) *storagePg {
 	return &storagePg{
 		db:       db,
-		taskRepo: postgres.NewTaskRepo(db),
+		postRepo: postgres.NewPostRepo(db),
 	}
 }
 
-func (s storagePg) Task() repo.TaskStorageI {
-	return s.taskRepo
+func (s storagePg) Post() repo.PostStorageI {
+	return s.postRepo
 }

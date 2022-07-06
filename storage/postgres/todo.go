@@ -1,201 +1,39 @@
 package postgres
 
 import (
-	"database/sql"
-	"time"
-
 	"github.com/jmoiron/sqlx"
-
-	pb "github.com/Muhammadjon226/toDo-service/genproto"
+	pb "github.com/Muhammadjon226/post_service/genproto/post_service"
 )
 
-type taskRepo struct {
+type postRepo struct {
 	db *sqlx.DB
 }
 
-// NewTaskRepo ...
-func NewTaskRepo(db *sqlx.DB) *taskRepo {
-	return &taskRepo{db: db}
+// NewPostRepo ...
+func NewPostRepo(db *sqlx.DB) *postRepo {
+	return &postRepo{db: db}
 }
 
-func (r *taskRepo) Create(task pb.Task) (pb.Task, error) {
-	var id string
-	err := r.db.QueryRow(`
-        INSERT INTO tasks(id,assignee, title, summary, deadline, status,updated_at)
-        VALUES ($1,$2, $3, $4, $5, $6, $7) returning id`, task.Id, task.Assignee, task.Title, task.Summary, task.Deadline, task.Status, time.Now().UTC()).Scan(&id)
-	if err != nil {
-		return pb.Task{}, err
-	}
+func (pr *postRepo) Create(*pb.Post) (*pb.Post, error) {
 
-	task, err = r.Get(id)
-	if err != nil {
-		return pb.Task{}, err
-	}
-
-	return task, nil
+	return nil, nil
 }
 
-func (r *taskRepo) Get(id string) (pb.Task, error) {
-	var task pb.Task
-	err := r.db.QueryRow(`
-        SELECT 
-			id, 
-			assignee, 
-			title, 
-			summary, 
-			deadline, 
-			status, 
-			created_at, 
-			updated_at 
-		FROM tasks
-        WHERE id = $1 
-		AND deleted_at IS NULL`, id).Scan(
-		&task.Id,
-		&task.Assignee,
-		&task.Title,
-		&task.Summary,
-		&task.Deadline,
-		&task.Status,
-		&task.CreatedAt,
-		&task.UpdatedAt,
-	)
-	if err != nil {
-		return pb.Task{}, err
-	}
+func (pr *postRepo) Get(*pb.ByIdReq) (*pb.Post, error) {
 
-	return task, nil
+	return nil, nil
 }
 
-func (r *taskRepo) List(page, limit int64) ([]*pb.Task, int64, error) {
-	offset := (page - 1) * limit
-	rows, err := r.db.Queryx(`
-		SELECT id, assignee, title, summary, deadline,status,created_at,updated_at FROM tasks 
-		WHERE deleted_at IS  NULL
-		LIMIT $1 OFFSET $2`,
-
-		limit, offset)
-	if err != nil {
-		return nil, 0, err
-	}
-	if err = rows.Err(); err != nil {
-		return nil, 0, err
-	}
-	defer rows.Close() // nolint:errcheck
-
-	var (
-		tasks []*pb.Task
-		
-		count int64
-	)
-	for rows.Next() {
-		var task  pb.Task
-		err = rows.Scan(
-			&task.Id,
-			&task.Assignee,
-			&task.Title,
-			&task.Summary,
-			&task.Deadline,
-			&task.Status,
-			&task.CreatedAt,
-			&task.UpdatedAt,
-		)
-		if err != nil {
-			return nil, 0, err
-		}
-		tasks = append(tasks, &task)
-	}
-
-	err = r.db.QueryRow(`SELECT count(*) FROM tasks`).Scan(&count)
-	if err != nil {
-		return nil, 0, err
-	}
-
-	return tasks, count, nil
-}
-
-func (r *taskRepo) Update(task pb.Task) (pb.Task, error) {
-	result, err := r.db.Exec(`
-	UPDATE tasks 
-	SET
-		
-		assignee = $1,
-		title = $2 ,
-		summary = $3,
-		deadline = $4,
-		status = $5,
-		updated_at = $6
-	 WHERE id=$7`,
-		task.Assignee, task.Title, task.Summary, task.Deadline, task.Status, time.Now().UTC(), task.Id)
-	if err != nil {
-		return pb.Task{}, err
-	}
-
-	if i, _ := result.RowsAffected(); i == 0 {
-		return pb.Task{}, sql.ErrNoRows
-	}
-
-	task, err = r.Get(task.Id)
-	if err != nil {
-		return pb.Task{}, err
-	}
-
-	return task, nil
-}
-
-func (r *taskRepo) Delete(id string) error {
-	result, err := r.db.Exec(`UPDATE tasks 
-	SET
-		deleted_at = current_timestamp
-	WHERE id=$1`, id)
-	if err != nil {
-		return err
-	}
-
-	if i, _ := result.RowsAffected(); i == 0 {
-		return sql.ErrNoRows
-	}
+func (pr *postRepo) Delete(*pb.ByIdReq) error {
 
 	return nil
 }
 
-func (r *taskRepo) ListOverDue(t time.Time, page, limit int64) ([]*pb.Task, int64, error) {
-	offset := (page - 1) * limit
-	rows, err := r.db.Queryx(`
-		SELECT 
-			id, 
-			assignee, 
-			title, 
-			summary, 
-			deadline,
-			status from tasks  
-		WHERE  deadline > $1 AND deleted_at IS NULL
-		LIMIT $2 OFFSET $3`,
-		t, limit, offset)
-	if err != nil {
-		return nil, 0, err
-	}
-	if err = rows.Err(); err != nil {
-		return nil, 0, err
-	}
-	defer rows.Close() // nolint:errcheck
+func (pr *postRepo) Update(*pb.Post) (*pb.Post, error) {
 
-	var (
-		tasks []*pb.Task
-		task  pb.Task
-		count int64
-	)
-	for rows.Next() {
-		err = rows.Scan(&task.Id, &task.Assignee, &task.Title, &task.Summary, &task.Deadline, &task.Status)
-		if err != nil {
-			return nil, 0, err
-		}
-		tasks = append(tasks, &task)
-	}
+	return nil, nil
+}
+func (pr *postRepo) List(*pb.ListReq) (*pb.ListResp, error) {
 
-	err = r.db.QueryRow(`SELECT count(*) FROM tasks`).Scan(&count)
-	if err != nil {
-		return nil, 0, err
-	}
-
-	return tasks, count, nil
+	return nil, nil
 }
