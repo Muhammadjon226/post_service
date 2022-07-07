@@ -58,7 +58,7 @@ func TestPostService_GetPostById(t *testing.T) {
 
 	for name, tc := range tests {
 		t.Run(name, func(t *testing.T) {
-			got, err := client.GetPostById(context.Background(), &tc.input)
+			got, err := client.GetPostByID(context.Background(), &tc.input)
 			if err != nil {
 				t.Error("failed to Get task", err)
 			}

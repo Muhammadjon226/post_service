@@ -9,6 +9,7 @@ import (
 	"github.com/Muhammadjon226/post_service/config"
 )
 
+//ConnectToDB for connection db
 func ConnectToDB(cfg config.Config) (*sqlx.DB, error) {
 	psqlString := fmt.Sprintf("host=%s port=%d user=%s password=%s dbname=%s sslmode=disable",
 		cfg.PostgresHost,

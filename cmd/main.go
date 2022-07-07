@@ -11,6 +11,7 @@ import (
 	"github.com/Muhammadjon226/post_service/pkg/db"
 	"github.com/Muhammadjon226/post_service/pkg/logger"
 	"github.com/Muhammadjon226/post_service/service"
+	grpcclient "github.com/Muhammadjon226/post_service/service/grpc_client"
 )
 
 func main() {
@@ -34,7 +35,13 @@ func main() {
 		log.Fatal("sqlx connection to postgres error", logger.Error(err))
 	}
 
-	postService := service.NewPostService(connDB, log)
+	client, err := grpcclient.New(cfg)
+	if err != nil {
+		log.Error("error while connecting other services")
+		return
+	}
+
+	postService := service.NewPostService(connDB, log, client)
 
 	lis, err := net.Listen("tcp", cfg.RPCPort)
 	if err != nil {
