@@ -90,8 +90,8 @@ func (s *PostService) ListPosts(ctx context.Context, req *pbPost.ListReq) (*pbPo
 }
 
 //UpdatePost for update post
-func (s *PostService) UpdatePost(ctx context.Context, req *pbPost.Post) (*pbPost.PostResponse, error) {
-	post, err := s.client.FirstService().UpdatePost(ctx, &pbFirst.Post{
+func (s *PostService) UpdatePost(ctx context.Context, req *pbPost.Post) (*pbPost.EmptyResp, error) {
+	_, err := s.client.FirstService().UpdatePost(ctx, &pbFirst.Post{
 		Id:     req.Id,
 		UserId: req.UserId,
 		Title:  req.Title,
@@ -101,14 +101,7 @@ func (s *PostService) UpdatePost(ctx context.Context, req *pbPost.Post) (*pbPost
 		s.logger.Error("failed to update Post", l.Error(err))
 		return nil, status.Error(codes.Internal, "failed to update Post")
 	}
-	return &pbPost.PostResponse{
-		Id:        post.Id,
-		UserId:    post.UserId,
-		Title:     post.Title,
-		Body:      post.Body,
-		CreatedAt: post.CreatedAt,
-		UpdatedAt: post.UpdatedAt,
-	}, nil
+	return &pbPost.EmptyResp{}, nil
 }
 
 //DeletePost for delete post by id
