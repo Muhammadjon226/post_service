@@ -12,3 +12,9 @@ proto-gen:
 
 lint:
 	golint -set_exit_status ${PKG_LIST}
+
+pull-proto-module:
+	git submodule update --init --recursive
+
+update-proto-module:
+	git submodule update --remote --rebase
