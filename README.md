@@ -1,2 +1,2 @@
 # post_service
-post_service in golnag
+post_service in golang
